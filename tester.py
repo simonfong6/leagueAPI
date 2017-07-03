@@ -1,9 +1,11 @@
 #tester.py
 
 import LOL
+import pprint
+import api_key
 
 class Tester:
-	testKey = "RGAPI-57a858b4-a696-40d2-8dad-d09a530eb83e"
+	test_api_key = api_key.api_key
 
 	#Faker	
 	SUMMONERNAME = "Hide on bush"
@@ -30,7 +32,7 @@ class Tester:
 	ACCOUNTID = ""
 
 	def __init__(self):
-		self.api = LOL.LeagueAPI(api_key=self.testKey, region=LOL.KR)
+		self.api = LOL.LeagueAPI(api_key=self.test_api_key, region=LOL.KR)
 
 	def test_lol_static_data_v3(self):
 		apis = {"allChampions": "/lol/static-data/v3/champions",
@@ -63,9 +65,19 @@ class Tester:
 			json = self.api.match_v3(getType=key, tournamentCode=TOURNAMENTCODE, matchId=MATCHID, accountId=ACCOUNTID)
 			print json
 
+	def test_runes_v3(self):
+		json = self.api.runes_v3(getType="runes", summonerId=self.SUMMONERID)
+		print json
+
+	def test_spectator_v3(self):
+		json = self.api.spectator_v3(getType="featured_games", summonerId=self.SUMMONERID)
+		pprint.pprint(json)
+
 def main():
 	tester = Tester()
-	tester.test_lol_static_data_v3()
+	#tester.test_lol_static_data_v3()
+	#tester.test_runes_v3()
+	tester.test_spectator_v3()
 
 if(__name__ == "__main__"):
 	main()

@@ -1,6 +1,7 @@
 import requests
 import pprint
 
+
 https = "https://"
 riotApi = ".api.riotgames.com"
 
@@ -17,8 +18,6 @@ TR = "tr1"
 RU = "ru"
 PBE = "pbe1"
 
-Mothake = "69921165"
-testKey = "RGAPI-57a858b4-a696-40d2-8dad-d09a530eb83e"
 class LeagueAPI:
 	def __init__(self, api_key, region=NA):
 		self.api_key = api_key
@@ -33,7 +32,7 @@ class LeagueAPI:
 		r = requests.get(url, params=payload)
 		return r.json()
 		
-	def champion_mastery_v3(self, getType="all", summonerId=Mothake, championId=None):
+	def champion_mastery_v3(self, getType="all", summonerId=None, championId=None):
 		apis = {"all": "/lol/champion-mastery/v3/champion-masteries/by-summoner/{}".format(summonerId),
 			"champion": "/lol/champion-mastery/v3/champion-masteries/by-summoner/{}/by-champion/{}".format(summonerId, championId),
 			"score": "/lol/champion-mastery/v3/scores/by-summoner/{}".format(summonerId)}
@@ -87,12 +86,31 @@ class LeagueAPI:
 			"matchTimeline": "/lol/match/v3/timelines/by-match/{}".format(matchId)}
 		return self.request(getType=getType, apis=apis)
 
+	def runes_v3(self, getType=None, summonerId=None):
+		apis = {"runes": "/lol/platform/v3/runes/by-summoner/{}".format(summonerId)}
+		return self.request(getType=getType, apis=apis)
+
+	def spectator_v3(self, getType=None, summonerId=None):
+		apis = {"active_game": "/lol/spectator/v3/active-games/by-summoner/{}".format(summonerId),
+			"featured_games": "/lol/spectator/v3/featured-games"}
+		return self.request(getType=getType, apis=apis)
+
 	def summoner_v3(self, getType="name", accountId=None, summonerName=None, summonerId=None):
 		apis = {"account": "/lol/summoner/v3/summoners/by-account/{}".format(accountId),
 			"name": "/lol/summoner/v3/summoners/by-name/{}".format(summonerName),
 			"summonerId": "/lol/summoner/v3/summoners/{}".format(summonerId)}
 		return self.request(getType=getType, apis=apis)
 
+	#TODO
+	def tournament_stub_v3(self, getType=None, tournamentCode=None):
+		apis = {"mockCode": "/lol/tournament-stub/v3/codes",
+			"mockLobbyEvents": "/lol/tournament-stub/v3/lobby-events/by-code/{}".format(tournamentCode),
+			"mockProvider": "/lol/tournament-stub/v3/providers",
+			"mockTournament": ""}
+		return self.request(getType=getType, apis=apis)
+
+	def tournament_v3(self, getType=None, tournamentCode=None):
+		pass
 
 class InputError(Exception):
 	def __init__(self, value):
