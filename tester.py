@@ -32,7 +32,7 @@ class Tester:
 	ACCOUNTID = ""
 
 	def __init__(self):
-		self.api = LOL.LeagueAPI(api_key=self.test_api_key, region=LOL.KR)
+		self.api = LOL.LeagueAPI(api_key=self.test_api_key, region=LOL.NA)
 
 	def test_lol_static_data_v3(self):
 		apis = {"allChampions": "/lol/static-data/v3/champions",
@@ -70,14 +70,25 @@ class Tester:
 		print json
 
 	def test_spectator_v3(self):
-		json = self.api.spectator_v3(getType="featured_games", summonerId=self.SUMMONERID)
+		json = self.api.spectator_v3(getType="active_game", summonerId=self.SUMMONERID)
+		pprint.pprint(json)
+
+	def test_tournament_stub_v3(self):
+		dataCodes = {"mapType": "SUMMONERS_RIFT",
+			"pickType": "BLIND_PICK",
+			"spectatorType": "ALL",
+			"teamSize": 5}
+		dataProvider = {"region": "NA",
+				"url": "http://www.mothakes.com"}
+		json = self.api.tournament_stub_v3(getType="mockProvider", data=dataProvider)
 		pprint.pprint(json)
 
 def main():
 	tester = Tester()
 	#tester.test_lol_static_data_v3()
 	#tester.test_runes_v3()
-	tester.test_spectator_v3()
+	#tester.test_spectator_v3()
+	tester.test_tournament_stub_v3()
 
 if(__name__ == "__main__"):
 	main()

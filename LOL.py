@@ -1,5 +1,4 @@
 import requests
-import pprint
 
 
 https = "https://"
@@ -23,13 +22,17 @@ class LeagueAPI:
 		self.api_key = api_key
 		self.host = https + region + riotApi
 
-	def request(self, getType, apis):
+	def request(self, getType, apis, data=None):
 		if(getType not in apis):
 			raise InputError("{" + getType + "} is not a valid getType!")
 		api = apis[getType]	
 		url = self.host + api
 		payload = {"api_key": self.api_key}
-		r = requests.get(url, params=payload)
+		r = None
+		if(data == None):
+			r = requests.get(url, params=payload)
+		else:
+			r = requests.post(url, params=payload, data=data)
 		return r.json()
 		
 	def champion_mastery_v3(self, getType="all", summonerId=None, championId=None):
@@ -102,15 +105,38 @@ class LeagueAPI:
 		return self.request(getType=getType, apis=apis)
 
 	#TODO
-	def tournament_stub_v3(self, getType=None, tournamentCode=None):
+	def tournament_stub_v3(self, getType=None, tournamentCode=None, data=None):
+		"""
+		Creates and reads mock tournament codes, providers, and tournaments.
+
+		Parameters
+		----------
+		getType : str
+			Selects which api to use.
+		tournamentCode : str
+			Tournament identifier number.
+		data : dict
+			Data required for POST requests.
+
+		Returns
+		-------
+		dict
+			JSON data for the specified API.
+		"""
 		apis = {"mockCode": "/lol/tournament-stub/v3/codes",
 			"mockLobbyEvents": "/lol/tournament-stub/v3/lobby-events/by-code/{}".format(tournamentCode),
 			"mockProvider": "/lol/tournament-stub/v3/providers",
-			"mockTournament": ""}
-		return self.request(getType=getType, apis=apis)
+			"mockTournament": "/lol/tournament-stub/v3/tournaments"}
+		return self.request(getType=getType, apis=apis, data=data)
 
-	def tournament_v3(self, getType=None, tournamentCode=None):
-		pass
+	def tournament_v3(self, getType=None, tournamentCode=None, data=None):
+		apis = {"createCode": "/lol/tournament/v3/codes",
+			"updateCode": "/lol/tournament/v3/codes/{}".format(tournamentCode),
+			"codeDTO": "/lol/tournament/v3/codes/{}".format(tournamentCode),
+			"lobbyEvents": "/lol/tournament/v3/lobby-events/by-code/{}".format(tournamentCode),
+			"createProvider": "/lol/tournament/v3/providers",
+			"createTournament": "/lol/tournament/v3/tournaments"}
+		return self.request(getType=getType, apis=apis, data=data)
 
 class InputError(Exception):
 	def __init__(self, value):
